@@ -1,0 +1,43 @@
+@"
+                   ┌──────────────────────────────┐
+                   │  PowerShell 7.6 (raw shell)   │
+                   │  - No MSVC paths              │
+                   │  - No INCLUDE/LIB/LIBPATH     │
+                   └───────────────┬──────────────┘
+                                   │
+                                   │ invoke wrapper
+                                   ▼
+                   ┌────────────────────────────────┐
+                   │  load_msvc_env.cmd              │
+                   │  - calls vcvars64.bat           │
+                   │  - prints environment via `set` │
+                   └─────────────────┬───────────────┘
+                                     │ pipe output
+                                     ▼
+                   ┌────────────────────────────────┐
+                   │  PowerShell importer            │
+                   │  - parses KEY=VALUE pairs       │
+                   │  - injects into Env: namespace  │
+                   └─────────────────┬───────────────┘
+                                     │
+                                     │ environment now populated
+                                     ▼
+                   ┌────────────────────────────────┐
+                   │  MSVC Toolchain (cl/link/lib)  │
+                   │  - sees STL include paths       │
+                   │  - sees Windows SDK             │
+                   │  - sees UCRT                    │
+                   └─────────────────┬───────────────┘
+                                     │
+                                     │ invoked by CMake/Ninja
+                                     ▼
+                   ┌────────────────────────────────┐
+                   │  CMake + Ninja Build System     │
+                   │  - configures                   │
+                   │  - compiles                     │
+                   │  - links                        │
+                   └─────────────────┬───────────────┘
+                                     │
+                                     ▼
+                           hello.exe (success)
+"@ | Out-File -Encoding utf8 tools/diagram.txt
